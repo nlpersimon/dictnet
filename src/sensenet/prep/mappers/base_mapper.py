@@ -38,6 +38,7 @@ class BaseMapper(ABC):
     def get_sense_id(self, word, pos, source_abbrev):
         number = self._pull_number(word, pos)
         num_str = str(number).zfill(2)
+        word = word.replace(' ', '_')
         sense_id = f'{word}.{pos}.{source_abbrev}.{num_str}'
         return sense_id
 
