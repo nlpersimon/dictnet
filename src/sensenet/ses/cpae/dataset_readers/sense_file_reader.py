@@ -49,6 +49,8 @@ class SenseFileReader(DatasetReader):
         with jsonlines.open(file_path, 'r') as f:
             for row in f:
                 word = row.get('word', None)
+                if not row['definition']:
+                    continue
                 instance = self.sense_to_instance(row['definition'], word)
                 yield instance
 
@@ -58,8 +60,6 @@ class SenseFileReader(DatasetReader):
         def_tokens = self.tokenizer.tokenize(definition)
         if self.max_len:
             def_tokens = def_tokens[:self.max_len]
-        if def_tokens[-1].text == SEP_TOKEN:
-            def_tokens.pop()
         fields = {
             'sense_in': TextField(def_tokens, self.input_token_indexers),
         }

@@ -1,1 +1,1 @@
-from .en_wn_reader import DictionaryReader
+from .sense_file_reader import SenseFileReader

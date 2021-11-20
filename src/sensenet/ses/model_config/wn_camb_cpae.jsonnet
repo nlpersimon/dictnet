@@ -5,7 +5,7 @@ local output_namespace = "output";
 
 {
     "dataset_reader" : {
-        "type": "dictionary",
+        "type": "sense_file",
         "tokenizer": "whitespace",
         "input_token_indexers": {
             "tokens": {
@@ -26,18 +26,14 @@ local output_namespace = "output";
             },
         },
         "max_len": 100,
-        "separate": true
     },
-    "train_data_path": "data/cambridge/en_cambridge_all.jsonl",
-    "validation_data_path": "data/benchmark/sim999_definitions.jsonl",
+    "train_data_path": "../../../sense_file.jsonl",
     "vocabulary": {
         "max_vocab_size": {
             [word_namespace]: 50000,
-            [output_namespace]: output_vocab_size,
         },
-        "tokens_to_add": {
-            [word_namespace]: ["<sep>"],
-            [output_namespace]: ["<sep>"],
+        "min_count": {
+            [output_namespace]: 5,
         },
         "pretrained_files": {
             [word_namespace]: pretrained_embedding
@@ -54,7 +50,7 @@ local output_namespace = "output";
                     "type": "embedding",
                     "embedding_dim": 300,
                     "pretrained_file": pretrained_embedding,
-                    "trainable": true,
+                    "trainable": false,
                     "vocab_namespace": word_namespace
                 }
             }
@@ -79,13 +75,5 @@ local output_namespace = "output";
         "num_epochs": 50,
         "grad_clipping": 5.0,
         "cuda_device": 1,
-        "callbacks": [
-            {
-                "type": "similarity",
-                "similarity_file": "data/benchmark/sim999.txt",
-                "word_namespace": word_namespace
-            },
-            {"type": "tensorboard"},
-        ],
     }
 }
