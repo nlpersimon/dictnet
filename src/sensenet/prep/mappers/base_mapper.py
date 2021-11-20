@@ -25,14 +25,42 @@ class BaseMapper(ABC):
 
     def read(self, file_pointer) -> Iterable[SenseFileLine]:
         for line in self._read(file_pointer):
-            yield self.to_sense_file_line(line)
+            word = self.get_word(line)
+            pos = self.get_pos(line)
+            source_abbrev = self.get_source_abbrev()
+            source = self.get_source()
+            definition = self.get_definition(line)
+            sense_id = self.get_sense_id(word, pos, source_abbrev)
+            yield SenseFileLine(
+                sense_id=sense_id,
+                word=word,
+                pos=pos,
+                source=source,
+                definition=definition
+            )
 
     @abstractmethod
     def _read(self, file_pointer):
         pass
 
     @abstractmethod
-    def to_sense_file_line(self, file_line) -> SenseFileLine:
+    def get_word(self, raw_file_line) -> str:
+        pass
+
+    @abstractmethod
+    def get_pos(self, raw_file_line) -> str:
+        pass
+
+    @abstractmethod
+    def get_source_abbrev(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_source(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_definition(self, raw_file_line) -> str:
         pass
 
     def get_sense_id(self, word, pos, source_abbrev):

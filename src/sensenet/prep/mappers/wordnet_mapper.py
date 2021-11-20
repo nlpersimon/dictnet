@@ -5,6 +5,7 @@ from ...schema.sense_file import SenseFileLine
 
 class WordnetMapper(BaseMapper):
     SOURCE_NAME = 'wordnet'
+    SOURCE_ABBREV = 'wn'
 
     def __init__(self,
                  sense_id: str = 'sense_id',
@@ -24,13 +25,19 @@ class WordnetMapper(BaseMapper):
             for synset in wn.synsets(lemma):
                 yield {'word': lemma, 'synset': synset}
 
-    def to_sense_file_line(self, file_line) -> SenseFileLine:
-        word = file_line['word']
-        synset = file_line['synset']
-        sense_file_line = SenseFileLine(
-            sense_id=self.get_sense_id(word, synset.pos(), 'wn'),
-            word=word,
-            pos=synset.pos(),
-            source=self.SOURCE_NAME,
-            definition=synset.definition())
-        return sense_file_line
+    def get_word(self, raw_file_line) -> str:
+        return raw_file_line['word']
+
+    def get_source_abbrev(self) -> str:
+        return self.SOURCE_ABBREV
+
+    def get_source(self) -> str:
+        return self.SOURCE_NAME
+
+    def get_pos(self, raw_file_line) -> str:
+        synset = raw_file_line['synset']
+        return synset.pos()
+
+    def get_definition(self, raw_file_line) -> str:
+        synset = raw_file_line['synset']
+        return synset.definition()

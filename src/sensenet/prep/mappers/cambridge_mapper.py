@@ -5,6 +5,7 @@ from ...schema.sense_file import SenseFileLine
 
 class CambridgeMapper(BaseMapper):
     SOURCE_NAME = 'cambridge'
+    SOURCE_ABBREV = 'camb'
 
     def __init__(self,
                  sense_id: str = 'sense_id',
@@ -25,13 +26,17 @@ class CambridgeMapper(BaseMapper):
         for line in file_pointer:
             yield line
 
-    def to_sense_file_line(self, file_line) -> SenseFileLine:
-        word = file_line['headword']
-        pos = file_line['pos'] or 'null'
-        sense_file_line = SenseFileLine(
-            sense_id=self.get_sense_id(word, pos, 'camb'),
-            word=word,
-            pos=pos,
-            source=self.SOURCE_NAME,
-            definition=file_line['en_def'])
-        return sense_file_line
+    def get_word(self, raw_file_line) -> str:
+        return raw_file_line['headword']
+
+    def get_pos(self, raw_file_line) -> str:
+        return raw_file_line['pos'] or 'null'
+
+    def get_definition(self, raw_file_line) -> str:
+        return raw_file_line['en_def']
+
+    def get_source_abbrev(self) -> str:
+        return self.SOURCE_ABBREV
+
+    def get_source(self) -> str:
+        return self.SOURCE_NAME
