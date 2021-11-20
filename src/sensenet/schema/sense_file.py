@@ -9,6 +9,7 @@ class SenseFileLine(BaseFileLine):
     sense_id: str
     word: str
     pos: str
+    pos_norm: str
     source: str
     definition: str
 
@@ -24,6 +25,7 @@ class SenseFileReader(BaseFileReader):
                  sense_id: str = 'sense_id',
                  word: str = 'word',
                  pos: str = 'pos',
+                 pos_norm: str = 'pos_norm',
                  source: str = 'source',
                  definition: str = 'definition') -> None:
         assert isinstance(
@@ -32,6 +34,7 @@ class SenseFileReader(BaseFileReader):
             sense_id=sense_id,
             word=word,
             pos=pos,
+            pos_norm=pos_norm,
             source=source,
             definition=definition)
         super().__init__(file_pointer, fields)
@@ -42,6 +45,7 @@ class SenseFileReader(BaseFileReader):
                 sense_id=raw_line[self.fields.sense_id],
                 word=raw_line[self.fields.word],
                 pos=raw_line[self.fields.pos],
+                pos_norm=raw_line[self.fields.pos_norm],
                 source=raw_line[self.fields.source],
                 definition=raw_line[self.fields.definition]
             )
@@ -53,6 +57,7 @@ class SenseFileWriter(BaseFileWriter):
                  sense_id: str = 'sense_id',
                  word: str = 'word',
                  pos: str = 'pos',
+                 pos_norm: str = 'pos_norm',
                  source: str = 'source',
                  definition: str = 'definition') -> None:
         assert isinstance(
@@ -61,6 +66,7 @@ class SenseFileWriter(BaseFileWriter):
             sense_id=sense_id,
             word=word,
             pos=pos,
+            pos_norm=pos_norm,
             source=source,
             definition=definition)
         super().__init__(file_pointer, fields)
@@ -71,6 +77,7 @@ class SenseFileWriter(BaseFileWriter):
             self.fields.sense_id: file_line.sense_id,
             self.fields.word: file_line.word,
             self.fields.pos: file_line.pos,
+            self.fields.pos_norm: file_line.pos_norm,
             self.fields.source: file_line.source,
             self.fields.definition: file_line.definition
         })

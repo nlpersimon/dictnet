@@ -9,12 +9,14 @@ class BaseMapper(ABC):
                  sense_id: str = 'sense_id',
                  word: str = 'word',
                  pos: str = 'pos',
+                 pos_norm: str = 'pos_norm',
                  source: str = 'source',
                  definition: str = 'definition') -> None:
         self._fields = SenseFileFields(
             sense_id=sense_id,
             word=word,
             pos=pos,
+            pos_norm=pos_norm,
             source=source,
             definition=definition)
         self._id_number = defaultdict(lambda: defaultdict(lambda: 1))
@@ -36,6 +38,7 @@ class BaseMapper(ABC):
                 sense_id=sense_id,
                 word=word,
                 pos=pos,
+                pos_norm=pos_norm,
                 source=source,
                 definition=definition
             )
