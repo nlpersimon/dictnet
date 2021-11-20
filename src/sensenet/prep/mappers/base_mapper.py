@@ -30,7 +30,8 @@ class BaseMapper(ABC):
             source_abbrev = self.get_source_abbrev()
             source = self.get_source()
             definition = self.get_definition(line)
-            sense_id = self.get_sense_id(word, pos, source_abbrev)
+            pos_norm = self.normalize_pos(pos)
+            sense_id = self.get_sense_id(word, pos_norm, source_abbrev)
             yield SenseFileLine(
                 sense_id=sense_id,
                 word=word,
@@ -61,6 +62,10 @@ class BaseMapper(ABC):
 
     @abstractmethod
     def get_definition(self, raw_file_line) -> str:
+        pass
+
+    @abstractmethod
+    def normalize_pos(self, pos: str) -> str:
         pass
 
     def get_sense_id(self, word, pos, source_abbrev):

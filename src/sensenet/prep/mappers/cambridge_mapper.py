@@ -6,6 +6,43 @@ from ...schema.sense_file import SenseFileLine
 class CambridgeMapper(BaseMapper):
     SOURCE_NAME = 'cambridge'
     SOURCE_ABBREV = 'camb'
+    CAMB_TO_UNI = {
+        'noun': 'NOUN',
+        'verb': 'VERB',
+        'adjective': 'ADJ',
+        'null': 'X',
+        'idiom': 'X',
+        'phrasal verb': 'X',
+        'adverb': 'ADV',
+        'preposition': 'X',
+        'plural noun': 'NOUN',
+        'exclamation': 'NOUN',
+        'suffix': 'X',
+        'pronoun': 'PRON',
+        'prefix': 'X',
+        'conjunction': 'CCONJ',
+        'determiner': 'DET',
+        'modal verb': 'X',
+        'number': 'NUM',
+        'ordinal number': 'NUM',
+        'auxiliary verb': 'AUX',
+        'predeterminer': 'DET',
+        'definite article': 'X',
+        'abbreviation': 'X',
+        'T': 'X',
+        'adjective, adverb': 'X',
+        'interjection': 'INTJ',
+        'short form': 'X',
+        'n': 'NOUN',
+        'C': 'X',
+        'trademark': 'X',
+        'adv': 'ADV',
+        'combining form': 'X',
+        'noun or exclamation': 'NOUN',
+        'symbol': 'SYM',
+        'V': 'VERB',
+        'indefinite article': 'X'
+    }
 
     def __init__(self,
                  sense_id: str = 'sense_id',
@@ -40,3 +77,6 @@ class CambridgeMapper(BaseMapper):
 
     def get_source(self) -> str:
         return self.SOURCE_NAME
+
+    def normalize_pos(self, pos: str) -> str:
+        return self.CAMB_TO_UNI[pos]

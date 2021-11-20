@@ -6,6 +6,13 @@ from ...schema.sense_file import SenseFileLine
 class WordnetMapper(BaseMapper):
     SOURCE_NAME = 'wordnet'
     SOURCE_ABBREV = 'wn'
+    WN_TO_UNI = {
+        'a': 'ADJ',
+        'v': 'VERB',
+        'n': 'NOUN',
+        'r': 'ADV',
+        's': 'ADJ'
+    }
 
     def __init__(self,
                  sense_id: str = 'sense_id',
@@ -41,3 +48,6 @@ class WordnetMapper(BaseMapper):
     def get_definition(self, raw_file_line) -> str:
         synset = raw_file_line['synset']
         return synset.definition()
+
+    def normalize_pos(self, pos: str) -> str:
+        return self.WN_TO_UNI[pos]
