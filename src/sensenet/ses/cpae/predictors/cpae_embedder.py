@@ -20,7 +20,7 @@ class CpaeEmbedder(Predictor):
     def predict_json(self, inputs: JsonDict) -> str:
         def_embeds = self.embed_inputs(inputs)
         return '{} {}'.format(
-            inputs['word'],
+            inputs['sense_id'],
             ' '.join(str(val) for val in def_embeds)
         )
     
@@ -47,7 +47,7 @@ class CpaeEmbedder(Predictor):
         results = []
         for inp, od in zip(inputs, output_dicts):
             results.append('{} {}'.format(
-                inp['word'],
+                inp['sense_id'],
                 ' '.join(str(val) for val in od['def_embeds'])
             ))
         return results
