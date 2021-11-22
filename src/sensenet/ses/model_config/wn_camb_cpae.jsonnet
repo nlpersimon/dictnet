@@ -27,7 +27,7 @@ local output_namespace = "output";
         },
         "max_len": 100,
     },
-    "train_data_path": "../../../sense_file.jsonl",
+    "train_data_path": "../../../data/v0.0.1/sense_file.jsonl",
     "vocabulary": {
         "max_vocab_size": {
             [word_namespace]: 50000,
