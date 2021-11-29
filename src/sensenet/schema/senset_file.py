@@ -12,7 +12,7 @@ class SensetFileLine(BaseFileLine):
     pos_norm: str
     senses: List[SenseFileLine]
 
-    def to_json(self) -> Dict[str, Union[str, List[str, str]]]:
+    def to_json(self) -> Dict[str, Union[str, List[Dict[str, str]]]]:
         return {
             'senset_id': self.senset_id,
             'word': self.word,
@@ -22,7 +22,7 @@ class SensetFileLine(BaseFileLine):
 
     @classmethod
     def from_json(cls,
-                  json_dict: Dict[str, Union[str, List[str, str]]]) -> "SensetFileLine":
+                  json_dict: Dict[str, Union[str, List[Dict[str, str]]]]) -> "SensetFileLine":
         return cls(
             senset_id=json_dict['senset_id'],
             word=json_dict['word'],
