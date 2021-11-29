@@ -41,7 +41,9 @@ class CambridgeMapper(BaseMapper):
         'noun or exclamation': 'NOUN',
         'symbol': 'SYM',
         'V': 'VERB',
-        'indefinite article': 'X'
+        'indefinite article': 'X',
+        '': 'X',
+        'pronoun plural of': 'PRON'
     }
 
     def __init__(self,
