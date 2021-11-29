@@ -1,6 +1,5 @@
 from nltk.corpus import wordnet as wn
 from .base_mapper import BaseMapper
-from ...schema.sense_file import SenseFileLine
 
 
 class WordnetMapper(BaseMapper):
@@ -14,18 +13,8 @@ class WordnetMapper(BaseMapper):
         's': 'ADJ'
     }
 
-    def __init__(self,
-                 sense_id: str = 'sense_id',
-                 word: str = 'word',
-                 pos: str = 'pos',
-                 source: str = 'source',
-                 definition: str = 'definition') -> None:
-        super().__init__(
-            sense_id=sense_id,
-            word=word,
-            pos=pos,
-            source=source,
-            definition=definition)
+    def __init__(self) -> None:
+        super().__init__()
 
     def _read(self, file_pointer=None):
         for lemma in wn.all_lemma_names():

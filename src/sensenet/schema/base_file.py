@@ -9,22 +9,17 @@ class BaseFileLine:
 
 
 class _BaseFile:
-    def __init__(self, file_pointer, fields) -> None:
+    def __init__(self, file_pointer) -> None:
         self._file_pointer = file_pointer
-        self._fields = fields
 
     @property
     def file_pointer(self):
         return self._file_pointer
 
-    @property
-    def fields(self):
-        return self._fields
-
 
 class BaseFileReader(ABC, _BaseFile):
-    def __init__(self, file_pointer, fields) -> None:
-        super().__init__(file_pointer, fields)
+    def __init__(self, file_pointer) -> None:
+        super().__init__(file_pointer)
 
     @abstractmethod
     def read(self) -> Iterable[BaseFileLine]:
@@ -32,8 +27,8 @@ class BaseFileReader(ABC, _BaseFile):
 
 
 class BaseFileWriter(ABC, _BaseFile):
-    def __init__(self, file_pointer, fields) -> None:
-        super().__init__(file_pointer, fields)
+    def __init__(self, file_pointer) -> None:
+        super().__init__(file_pointer)
 
     @abstractmethod
     def write(self, file_line: BaseFileLine) -> None:

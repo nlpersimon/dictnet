@@ -1,29 +1,12 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Iterable
-from ...schema.sense_file import SenseFileLine, SenseFileFields
+from ...schema.sense_file import SenseFileLine
 
 
 class BaseMapper(ABC):
-    def __init__(self,
-                 sense_id: str = 'sense_id',
-                 word: str = 'word',
-                 pos: str = 'pos',
-                 pos_norm: str = 'pos_norm',
-                 source: str = 'source',
-                 definition: str = 'definition') -> None:
-        self._fields = SenseFileFields(
-            sense_id=sense_id,
-            word=word,
-            pos=pos,
-            pos_norm=pos_norm,
-            source=source,
-            definition=definition)
+    def __init__(self) -> None:
         self._id_number = defaultdict(lambda: defaultdict(lambda: 1))
-
-    @property
-    def fields(self):
-        return self._fields
 
     def read(self, file_pointer) -> Iterable[SenseFileLine]:
         for line in self._read(file_pointer):

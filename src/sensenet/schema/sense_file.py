@@ -1,6 +1,6 @@
 import jsonlines
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, Dict
 from .base_file import BaseFileReader, BaseFileWriter, BaseFileLine
 
 
@@ -13,72 +13,49 @@ class SenseFileLine(BaseFileLine):
     source: str
     definition: str
 
+    def to_json(self) -> Dict[str, str]:
+        return {
+            'sense_id': self.sense_id,
+            'word': self.word,
+            'pos': self.pos,
+            'pos_norm': self.pos_norm,
+            'source': self.source,
+            'definition': self.definition,
+        }
 
-@dataclass
-class SenseFileFields(SenseFileLine):
-    pass
+    @classmethod
+    def from_json(cls, json_dict: Dict[str, str]) -> "SenseFileLine":
+        return cls(
+            sense_id=json_dict['sense_id'],
+            word=json_dict['word'],
+            pos=json_dict['pos'],
+            pos_norm=json_dict['pos_norm'],
+            source=json_dict['source'],
+            definition=json_dict['definition']
+        )
 
 
 class SenseFileReader(BaseFileReader):
     def __init__(self,
-                 file_pointer,
-                 sense_id: str = 'sense_id',
-                 word: str = 'word',
-                 pos: str = 'pos',
-                 pos_norm: str = 'pos_norm',
-                 source: str = 'source',
-                 definition: str = 'definition') -> None:
+                 file_pointer) -> None:
         assert isinstance(
             file_pointer, jsonlines.Reader), "Please use jsonlines to open the file"
-        fields = SenseFileFields(
-            sense_id=sense_id,
-            word=word,
-            pos=pos,
-            pos_norm=pos_norm,
-            source=source,
-            definition=definition)
-        super().__init__(file_pointer, fields)
+
+        super().__init__(file_pointer)
 
     def read(self) -> Iterable[SenseFileLine]:
         for raw_line in self.file_pointer:
-            yield SenseFileLine(
-                sense_id=raw_line[self.fields.sense_id],
-                word=raw_line[self.fields.word],
-                pos=raw_line[self.fields.pos],
-                pos_norm=raw_line[self.fields.pos_norm],
-                source=raw_line[self.fields.source],
-                definition=raw_line[self.fields.definition]
-            )
+            yield SenseFileLine.from_json(raw_line)
 
 
 class SenseFileWriter(BaseFileWriter):
     def __init__(self,
-                 file_pointer,
-                 sense_id: str = 'sense_id',
-                 word: str = 'word',
-                 pos: str = 'pos',
-                 pos_norm: str = 'pos_norm',
-                 source: str = 'source',
-                 definition: str = 'definition') -> None:
+                 file_pointer) -> None:
         assert isinstance(
             file_pointer, jsonlines.Writer), "Please use jsonlines to open the file"
-        fields = SenseFileFields(
-            sense_id=sense_id,
-            word=word,
-            pos=pos,
-            pos_norm=pos_norm,
-            source=source,
-            definition=definition)
-        super().__init__(file_pointer, fields)
+        super().__init__(file_pointer)
 
     def write(self, file_line: SenseFileLine) -> None:
         assert isinstance(file_line, SenseFileLine)
-        self.file_pointer.write({
-            self.fields.sense_id: file_line.sense_id,
-            self.fields.word: file_line.word,
-            self.fields.pos: file_line.pos,
-            self.fields.pos_norm: file_line.pos_norm,
-            self.fields.source: file_line.source,
-            self.fields.definition: file_line.definition
-        })
+        self.file_pointer.write(file_line.to_json())
         return
