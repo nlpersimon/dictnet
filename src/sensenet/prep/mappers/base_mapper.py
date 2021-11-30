@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import Iterable
-from ...schema.sense_file import SenseFileLine
+from ...schema.sense_file import Sense
 
 
 class BaseMapper(ABC):
     def __init__(self) -> None:
         self._id_number = defaultdict(lambda: defaultdict(lambda: 1))
 
-    def read(self, file_pointer) -> Iterable[SenseFileLine]:
+    def read(self, file_pointer) -> Iterable[Sense]:
         for line in self._read(file_pointer):
             word = self.get_word(line)
             pos = self.get_pos(line)
@@ -17,7 +17,7 @@ class BaseMapper(ABC):
             definition = self.get_definition(line)
             pos_norm = self.normalize_pos(pos)
             sense_id = self.get_sense_id(word, pos_norm, source_abbrev)
-            yield SenseFileLine(
+            yield Sense(
                 sense_id=sense_id,
                 word=word,
                 pos=pos,

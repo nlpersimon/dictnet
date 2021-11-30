@@ -1,5 +1,5 @@
 from collections import Counter, defaultdict, deque
-from ..schema.senset_file import SensetFileLine
+from ..schema.senset_file import Senset
 
 
 def create_senset_id(sense):
@@ -24,7 +24,7 @@ class SenseAlignment:
             for senset_id, source_to_senses in self._group_senses_to_sensets().items():
                 senset_senses = [
                     sense for senses in source_to_senses.values() for sense in senses]
-                self._sensets.append(SensetFileLine(
+                self._sensets.append(Senset(
                     senset_id=senset_id, word=self._word, pos_norm=self._pos, senses=senset_senses))
         return self._sensets
 

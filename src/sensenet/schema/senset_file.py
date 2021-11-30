@@ -2,15 +2,15 @@ import jsonlines
 from dataclasses import dataclass
 from typing import Iterable, List, Union, Dict
 from .base_file import BaseFileReader, BaseFileWriter, BaseFileLine
-from .sense_file import SenseFileLine
+from .sense_file import Sense
 
 
 @dataclass
-class SensetFileLine(BaseFileLine):
+class Senset(BaseFileLine):
     senset_id: str
     word: str
     pos_norm: str
-    senses: List[SenseFileLine]
+    senses: List[Sense]
 
     def to_json(self) -> Dict[str, Union[str, List[Dict[str, str]]]]:
         return {
@@ -22,12 +22,12 @@ class SensetFileLine(BaseFileLine):
 
     @classmethod
     def from_json(cls,
-                  json_dict: Dict[str, Union[str, List[Dict[str, str]]]]) -> "SensetFileLine":
+                  json_dict: Dict[str, Union[str, List[Dict[str, str]]]]) -> "Senset":
         return cls(
             senset_id=json_dict['senset_id'],
             word=json_dict['word'],
             pos_norm=json_dict['pos_norm'],
-            senses=[SenseFileLine.from_json(sense)
+            senses=[Sense.from_json(sense)
                     for sense in json_dict['senses']]
         )
 
@@ -40,9 +40,9 @@ class SensetFileReader(BaseFileReader):
 
         super().__init__(file_pointer)
 
-    def read(self) -> Iterable[SensetFileLine]:
+    def read(self) -> Iterable[Senset]:
         for raw_line in self.file_pointer:
-            yield SensetFileLine.from_json(raw_line)
+            yield Senset.from_json(raw_line)
 
 
 class SensetFileWriter(BaseFileWriter):
@@ -52,7 +52,7 @@ class SensetFileWriter(BaseFileWriter):
             file_pointer, jsonlines.Writer), "Please use jsonlines to open the file"
         super().__init__(file_pointer)
 
-    def write(self, file_line: SensetFileLine) -> None:
-        assert isinstance(file_line, SensetFileLine)
-        self.file_pointer.write(file_line.to_json())
+    def write(self, senset: Senset) -> None:
+        assert isinstance(senset, Senset)
+        self.file_pointer.write(senset.to_json())
         return

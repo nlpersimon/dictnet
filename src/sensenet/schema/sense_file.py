@@ -5,7 +5,7 @@ from .base_file import BaseFileReader, BaseFileWriter, BaseFileLine
 
 
 @dataclass
-class SenseFileLine(BaseFileLine):
+class Sense(BaseFileLine):
     sense_id: str
     word: str
     pos: str
@@ -24,7 +24,7 @@ class SenseFileLine(BaseFileLine):
         }
 
     @classmethod
-    def from_json(cls, json_dict: Dict[str, str]) -> "SenseFileLine":
+    def from_json(cls, json_dict: Dict[str, str]) -> "Sense":
         return cls(
             sense_id=json_dict['sense_id'],
             word=json_dict['word'],
@@ -43,9 +43,9 @@ class SenseFileReader(BaseFileReader):
 
         super().__init__(file_pointer)
 
-    def read(self) -> Iterable[SenseFileLine]:
+    def read(self) -> Iterable[Sense]:
         for raw_line in self.file_pointer:
-            yield SenseFileLine.from_json(raw_line)
+            yield Sense.from_json(raw_line)
 
 
 class SenseFileWriter(BaseFileWriter):
@@ -55,7 +55,7 @@ class SenseFileWriter(BaseFileWriter):
             file_pointer, jsonlines.Writer), "Please use jsonlines to open the file"
         super().__init__(file_pointer)
 
-    def write(self, file_line: SenseFileLine) -> None:
-        assert isinstance(file_line, SenseFileLine)
+    def write(self, file_line: Sense) -> None:
+        assert isinstance(file_line, Sense)
         self.file_pointer.write(file_line.to_json())
         return

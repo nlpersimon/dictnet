@@ -2,7 +2,7 @@ from copy import deepcopy
 from typing import Iterable
 from nltk.corpus import stopwords
 import spacy
-from ..schema.sense_file import SenseFileLine
+from ..schema.sense_file import Sense
 
 nlp = spacy.load('en_core_web_sm')
 
@@ -18,7 +18,7 @@ class Preprocessor:
         self._stop_words = set(stopwords.words(
             'english')) if remove_stop_words else None
 
-    def preprocess(self, sense_file_lines: Iterable[SenseFileLine]) -> Iterable[SenseFileLine]:
+    def preprocess(self, sense_file_lines: Iterable[Sense]) -> Iterable[Sense]:
         for line in sense_file_lines:
             line = deepcopy(line)
             if self._remove_mwe and self.is_mwe(line.word):

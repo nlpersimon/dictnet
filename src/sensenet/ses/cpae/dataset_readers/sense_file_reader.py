@@ -9,7 +9,7 @@ import jsonlines
 
 @DatasetReader.register('sense_file')
 class SenseFileReader(DatasetReader):
-    """ Read jsonline files of `SenseFileLine` and convert it to allennlp instances
+    """ Read jsonline files of `Sense` and convert it to allennlp instances
 
     Each line of a jsonline file must have three fields:
         1. word
