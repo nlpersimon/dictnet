@@ -1,6 +1,9 @@
 from copy import deepcopy
-from typing import List
+from typing import List, TYPE_CHECKING
 from ..schema.sense_file import Sense
+
+if TYPE_CHECKING:
+    from .sensenet import SenseNet
 
 
 class Senset:
@@ -13,6 +16,7 @@ class Senset:
         self._word = word
         self._pos_norm = pos_norm
         self._senses = senses
+        self._sensenet = None
 
     @property
     def senset_id(self) -> str:
@@ -32,3 +36,11 @@ class Senset:
 
     def __repr__(self) -> str:
         return f"Senset('{self.senset_id}')"
+
+    def register_sensenet(self, sensenet: "SenseNet") -> "Senset":
+        self._sensenet = sensenet
+        return self
+
+    def similar_sensets(self, pos: str = None, top: int = 10) -> List["Senset"]:
+        assert self._sensenet is not None, 'Please register a SenseNet first'
+        return self._sensenet.find_similar_sensets_by_id(self.senset_id, pos, top)
