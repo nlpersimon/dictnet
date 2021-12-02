@@ -8,4 +8,3 @@ torch==1.7.1
 spacy==3.0.5
 jsonlines==2.0.0
 numpy==1.19.5
-dataclasses==0.8
