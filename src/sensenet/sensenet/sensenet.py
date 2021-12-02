@@ -76,8 +76,9 @@ class SenseNet:
         senset = self.senset(senset_id)
         base_sense = _pick_base_sense(senset.senses)
         similar_sensets = []
-        for similar_senset_id, similarity in sorted(self._similar_senset_ids(base_sense.sense_id).items(),
-                                                    key=lambda x: x[1], reverse=True):
+        for similar_senset_id, similarity in sorted(
+                self._similar_senset_ids(base_sense.sense_id).items(),
+                key=lambda x: x[1], reverse=True):
             _, _pos_norm, _ = similar_senset_id.rsplit('.', 2)
             if pos_norm is None or _pos_norm == pos_norm:
                 similar_sensets.append(
