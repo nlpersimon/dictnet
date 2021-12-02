@@ -1,9 +1,12 @@
 from gensim.models import KeyedVectors
 import jsonlines
 from typing import List, Dict
+from nltk.tokenize import word_tokenize
+import numpy as np
 from .senset import Senset
 from ..schema.sense_file import Sense
 from ..schema.senset_file import SensetFileReader
+from ..ses.load_embedder import load_embedder
 
 
 def _pick_base_sense(senses: List[Sense]) -> Sense:
@@ -23,12 +26,16 @@ def _group_senses_by_source(senses: List[Sense]) -> Dict[str, List[Sense]]:
 
 
 class SenseNet:
-    def __init__(self, sensets: List[Senset], sense_embeds: KeyedVectors) -> None:
+    def __init__(self,
+                 sensets: List[Senset],
+                 sense_embeds: KeyedVectors,
+                 sense_embedder) -> None:
         self._senset_table = self._build_senset_table(sensets)
         self._sense_to_senset = {sense.sense_id: senset.senset_id for senset in sensets
                                  for sense in senset.senses}
         self._id_to_senset = {senset.senset_id: senset for senset in sensets}
         self._sense_embeds = sense_embeds
+        self._sense_embedder = sense_embedder
 
     def _build_senset_table(self, sensets: List[Senset]) -> Dict[str, Dict[str, List[Senset]]]:
         senset_table = {}
@@ -60,13 +67,17 @@ class SenseNet:
                 if pos is None or p == pos]
 
     @classmethod
-    def from_path(cls, senset_file_path: str, sense_embeds_path: str) -> "SenseNet":
+    def from_path(cls,
+                  senset_file_path: str,
+                  sense_embeds_path: str,
+                  sense_embedder_path: str) -> "SenseNet":
         with jsonlines.open(senset_file_path) as f:
             sensets = [Senset(i.senset_id, i.word, i.pos_norm, i.senses)
                        for i in SensetFileReader(f).read()]
         sense_embeds = KeyedVectors.load_word2vec_format(
             sense_embeds_path, binary=False)
-        sensenet = cls(sensets, sense_embeds)
+        sense_embedder = load_embedder(sense_embedder_path)
+        sensenet = cls(sensets, sense_embeds, sense_embedder)
         for senset in sensets:
             senset.register_sensenet(sensenet)
         return sensenet
@@ -75,19 +86,66 @@ class SenseNet:
                                    pos_norm: str = None, topn: int = 10) -> List[Senset]:
         senset = self.senset(senset_id)
         base_sense = _pick_base_sense(senset.senses)
+        similar_sensets = self._find_similar_sensets_by_sense_id(
+            base_sense.sense_id, pos_norm, topn)
+        return similar_sensets
+
+    def reverse_dictionary(self,
+                           definition: str,
+                           pos_norm: str = None,
+                           topn: int = 10) -> List[Senset]:
+        definition = ' '.join(word_tokenize(definition))
+        similar_sensets = self._find_similar_sensets_by_definition(
+            definition, pos_norm, topn)
+        return similar_sensets
+
+    def _find_similar_sensets_by_definition(self,
+                                            definition: str,
+                                            pos_norm: str = None,
+                                            topn: int = 10) -> List[Senset]:
+        sensets_similarity = self._sensets_similarity_by_definition(definition)
+        similar_sensets = self._filter_similar_sensets(
+            sensets_similarity, pos_norm, topn)
+        return similar_sensets
+
+    def _sensets_similarity_by_definition(self, definition: str) -> Dict[str, float]:
+        def_embeds = np.array(self._sense_embedder.embed_inputs({
+            'definition': definition
+        }))
+        sensets_similarity = {}
+        for sense_id, similarity in self._sense_embeds.similar_by_vector(
+                def_embeds, topn=len(self._sense_embeds.vocab)):
+            similar_senset_id = self._sense_to_senset[sense_id]
+            sensets_similarity.setdefault(similar_senset_id, similarity)
+        return sensets_similarity
+
+    def _find_similar_sensets_by_sense_id(self,
+                                          sense_id: str,
+                                          pos_norm: str = None,
+                                          topn: int = 10) -> List[Senset]:
+        sensets_similarity = self._sensets_similarity_by_sense_id(sense_id)
+        similar_sensets = self._filter_similar_sensets(
+            sensets_similarity, pos_norm, topn)
+        return similar_sensets
+
+    def _sensets_similarity_by_sense_id(self, sense_id: str) -> Dict[str, float]:
+        sensets_similarity = {}
+        for sense_id, similarity in self._sense_embeds.most_similar(
+                sense_id, topn=len(self._sense_embeds.vocab)):
+            similar_senset_id = self._sense_to_senset[sense_id]
+            sensets_similarity.setdefault(similar_senset_id, similarity)
+        return sensets_similarity
+
+    def _filter_similar_sensets(self,
+                                sensets_similarity,
+                                pos_norm: str = None,
+                                topn: int = 10) -> List[Senset]:
         similar_sensets = []
         for similar_senset_id, similarity in sorted(
-                self._similar_senset_ids(base_sense.sense_id).items(),
+                sensets_similarity.items(),
                 key=lambda x: x[1], reverse=True):
             _, _pos_norm, _ = similar_senset_id.rsplit('.', 2)
             if pos_norm is None or _pos_norm == pos_norm:
                 similar_sensets.append(
                     (self.senset(similar_senset_id), similarity))
         return similar_sensets[:topn]
-
-    def _similar_senset_ids(self, sense_id: str) -> Dict[str, float]:
-        similar_senset_ids = {}
-        for sense_id, similarity in self._sense_embeds.most_similar(sense_id, topn=len(self._sense_embeds.vocab)):
-            similar_senset_id = self._sense_to_senset[sense_id]
-            similar_senset_ids.setdefault(similar_senset_id, similarity)
-        return similar_senset_ids
