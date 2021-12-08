@@ -3,7 +3,7 @@ from typing import List, TYPE_CHECKING
 from ..schema.sense_file import Sense
 
 if TYPE_CHECKING:
-    from .sensenet import SenseNet
+    from .base_sensenet import BaseSenseNet
 
 
 class Senset:
@@ -37,7 +37,7 @@ class Senset:
     def __repr__(self) -> str:
         return f"Senset('{self.senset_id}')"
 
-    def register_sensenet(self, sensenet: "SenseNet") -> "Senset":
+    def register_sensenet(self, sensenet: "BaseSenseNet") -> "Senset":
         self._sensenet = sensenet
         return self
 
