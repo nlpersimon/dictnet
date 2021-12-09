@@ -30,24 +30,26 @@ First, create a new virtual environment (recommended) and install the dependenci
 pip install -r requirements.txt
 ```
 
-Second, download the [data](https://drive.google.com/file/d/1kcFQ5d2re3nTi9W9t9OqGXUxC2iThGKk/view?usp=sharing) for the system.
+Second, download the [data](https://drive.google.com/file/d/19JqTS2ffnwdYrKQRXVdwHMmbDmFAOFTy/view?usp=sharing) for the system.
 
 Once we have done, the structure of the project should look like
 ```bash
 ├── scripts
 ├── src
 ├── data 
-│   └── v0.0.1
+│   └── v0.1.0
 │       └── wn_bi-camb
-│           ├── sense_file_bi-camb.jsonl
-│           ├── senset_file_bi-camb.jsonl
-│           ├── wn_bi-camb_cpae.txt
-│           └── wn_bi-camb_cpae
+│           ├── sense_file.jsonl
+│           ├── senset_file.jsonl
+│           ├── sense_embeddings.txt
+│           ├── senset_embeddings.txt
+│           └── sense_embedder/
 ├── requirements.txt
 ├── README.md 
-├── demo.ipynb
+├── demo_max-sensenet.ipynb
+├── demo_mean-sensenet.ipynb
 └── .gitignore
 ```
 
 # Quick Start
-Please refer to the [demo.ipynb](./demo.ipynb).
+Please refer to the [demo_max-sensenet.ipynb](./demo_max-sensenet.ipynb) and [demo_mean-sensenet.ipynb](./demo_mean-sensenet.ipynb).
