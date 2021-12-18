@@ -136,3 +136,10 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+notebooks/
+data/
+trained_models/
+embeddings/
+trained_models.orig
+embeddings.orig
