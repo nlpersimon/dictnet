@@ -10,6 +10,7 @@ class Sense(BaseFileLine):
     word: str
     pos: str
     pos_norm: str
+    level: str
     source: str
     definition: str
 
@@ -19,6 +20,7 @@ class Sense(BaseFileLine):
             'word': self.word,
             'pos': self.pos,
             'pos_norm': self.pos_norm,
+            'level': self.level,
             'source': self.source,
             'definition': self.definition,
         }
@@ -30,6 +32,7 @@ class Sense(BaseFileLine):
             word=json_dict['word'],
             pos=json_dict['pos'],
             pos_norm=json_dict['pos_norm'],
+            level=json_dict['level'],
             source=json_dict['source'],
             definition=json_dict['definition']
         )

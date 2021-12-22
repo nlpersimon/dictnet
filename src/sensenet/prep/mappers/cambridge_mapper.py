@@ -63,6 +63,9 @@ class CambridgeMapper(BaseMapper):
     def get_definition(self, raw_file_line) -> str:
         return raw_file_line['en_def']
 
+    def get_level(self, raw_file_line) -> str:
+        return raw_file_line['level']
+
     def get_source_abbrev(self) -> str:
         return self.SOURCE_ABBREV
 

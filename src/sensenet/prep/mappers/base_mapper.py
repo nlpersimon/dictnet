@@ -12,6 +12,7 @@ class BaseMapper(ABC):
         for line in self._read(file_pointer):
             word = self.get_word(line)
             pos = self.get_pos(line)
+            level = self.get_level(line)
             source_abbrev = self.get_source_abbrev()
             source = self.get_source()
             definition = self.get_definition(line)
@@ -22,6 +23,7 @@ class BaseMapper(ABC):
                 word=word,
                 pos=pos,
                 pos_norm=pos_norm,
+                level=level,
                 source=source,
                 definition=definition
             )
@@ -36,6 +38,10 @@ class BaseMapper(ABC):
 
     @abstractmethod
     def get_pos(self, raw_file_line) -> str:
+        pass
+
+    @abstractmethod
+    def get_level(self, raw_file_line) -> str:
         pass
 
     @abstractmethod
