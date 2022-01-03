@@ -42,3 +42,9 @@ class MeanSenseNet(BaseSenseNet):
             if pos_norm is None or senset.pos_norm == pos_norm:
                 similar_sensets.append((senset, similarity))
         return similar_sensets
+
+    def embeddings(self, senset_id: str) -> np.ndarray:
+        return self._sense_embeds[senset_id]
+
+    def senset_similarity(self, senset_id1: str, senset_id2: str) -> float:
+        return self._sense_embeds.similarity(senset_id1, senset_id2)
