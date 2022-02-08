@@ -24,3 +24,15 @@ def disambiguate_group_sense(w1: str, w2: str, response_class=UJSONResponse):
     except Exception as e:
         message = str(e)
     return {'message': message}
+
+
+@app.get('/api/rd')
+def reverse_dictionary(query: str, response_class=UJSONResponse):
+    try:
+        message = []
+        for senset, similarity in sensenet.reverse_dictionary(query):
+            message.append({'senset': rebuild_senset(
+                senset).to_json(), 'similarity': round_sig(similarity)})
+    except Exception as e:
+        message = str(e)
+    return {'message': message}
