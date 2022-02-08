@@ -32,14 +32,11 @@ class SenseAlignment:
         sensets = self._initialize_sensets()
         while self._senses:
             senset_candidates = self._distribute_senses(sensets)
-            for senset_id, candidates in senset_candidates.items():
-                if candidates:
-                    candidates.sort(key=lambda x: x[1])
-                    sense, _ = candidates.pop()
-                    sensets[senset_id][sense.source].append(sense)
-                while candidates:
-                    sense, _ = candidates.pop()
-                    self._senses.append(sense)
+            senset_id, sense, _ = senset_candidates.pop()
+            sensets[senset_id][sense.source].append(sense)
+            while senset_candidates:
+                _, sense, _ = senset_candidates.pop()
+                self._senses.append(sense)
         return sensets
 
     def _initialize_sensets(self):
@@ -57,12 +54,13 @@ class SenseAlignment:
         return sensets
 
     def _distribute_senses(self, sensets):
-        senset_candidates = {senset_id: [] for senset_id in sensets}
+        senset_candidates = []
         while self._senses:
             sense = self._senses.pop()
             senset_id, similarity = self._find_most_similar_senset(
                 sense, sensets)
-            senset_candidates[senset_id].append((sense, similarity))
+            senset_candidates.append((senset_id, sense, similarity))
+        senset_candidates.sort(key=lambda x: x[2])
         return senset_candidates
 
     def _find_most_similar_senset(self, sense, sensets):
