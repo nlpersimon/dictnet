@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
+from starlette.middleware.cors import CORSMiddleware
 
 from src.sensenet.sensenet import load_sensenet
 from api_utils.util import rebuild_senset, round_sig
@@ -11,6 +12,17 @@ sensenet = load_sensenet('data/v0.2.0/wn_bi-camb',
 
 
 app = FastAPI()
+
+origins = ["*"]
+
+# 設置跨域傳參
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get('/api/gsd')
