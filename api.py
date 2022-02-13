@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 from starlette.middleware.cors import CORSMiddleware
+import re
 
 from src.sensenet.sensenet import load_sensenet
 from api_utils.util import rebuild_senset, round_sig
@@ -63,3 +64,18 @@ def get_highlight_indices(definition, query):
                 indices.append(i)
                 break
     return indices
+
+
+@app.get('/api/compound')
+def parse_compound(compound: str, response_class=UJSONResponse):
+    response = {'query': '', 'pos': ''}
+    if compound:
+        pos_part = re.findall('pos:.*$', compound)
+        if pos_part:
+            _, pos = pos_part[0].split(':')
+            response['pos'] = pos
+            definition = compound.replace(pos_part[0], '').strip()
+        else:
+            definition = compound.strip()
+        response['query'] = definition
+    return response
