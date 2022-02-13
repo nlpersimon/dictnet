@@ -43,8 +43,23 @@ def reverse_dictionary(query: str, response_class=UJSONResponse):
     try:
         message = []
         for senset, similarity in sensenet.reverse_dictionary(query):
-            message.append({'senset': rebuild_senset(
-                senset).to_json(), 'similarity': round_sig(similarity)})
+            senset_json = rebuild_senset(senset).to_json()
+            for sense in senset_json['senses']:
+                sense['highlight'] = get_highlight_indices(
+                    sense['en_def'], query)
+            message.append(
+                {'senset': senset_json, 'similarity': round_sig(similarity)})
     except Exception as e:
         message = str(e)
     return {'message': message}
+
+
+def get_highlight_indices(definition, query):
+    definition_tokens = definition.split()
+    indices = []
+    for query_token in query.split():
+        for i, def_token in enumerate(definition_tokens):
+            if def_token.startswith(query_token):
+                indices.append(i)
+                break
+    return indices
