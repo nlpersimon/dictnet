@@ -42,7 +42,7 @@ def disambiguate_group_sense(w1: str, w2: str, response_class=UJSONResponse):
 @app.get('/api/rd')
 def reverse_dictionary(query: str, pos: str = '', response_class=UJSONResponse):
     try:
-        pos = pos or None
+        pos = pos.upper() or None
         message = []
         for senset, similarity in sensenet.reverse_dictionary(query, pos):
             senset_json = rebuild_senset(senset).to_json()
