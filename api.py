@@ -51,6 +51,8 @@ def reverse_dictionary(query: str, pos: str = '', response_class=UJSONResponse):
                     sense['en_def'], query)
             message.append(
                 {'senset': senset_json, 'similarity': round_sig(similarity)})
+        message.sort(
+            key=lambda msg: sum(len(sense['highlight']) for sense in msg['senset']['senses']), reverse=True)
     except Exception as e:
         message = str(e)
     return {'message': message}
