@@ -69,16 +69,39 @@ def get_highlight_indices(definition, query):
     return indices
 
 
+@app.get('/api/senset')
+def get_sensets(headword: str, pos: str = '', response_class=UJSONResponse):
+    try:
+        pos = pos.upper() or None
+        message = []
+        for senset in sensenet.sensets(headword, pos):
+            senset_json = rebuild_senset(senset).to_json()
+            message.append(
+                {'senset': senset_json})
+    except Exception as e:
+        message = str(e)
+    return {'message': message}
+
+
 @app.get('/api/compound')
 def parse_compound(compound: str, response_class=UJSONResponse):
-    response = {'query': '', 'pos': ''}
+    response = {'query': '', 'pos': '', 'senset': ''}
     if compound:
-        pos_part = re.findall('pos:.*$', compound)
-        if pos_part:
-            _, pos = pos_part[0].split(':')
-            response['pos'] = pos
-            definition = compound.replace(pos_part[0], '').strip()
-        else:
-            definition = compound.strip()
-        response['query'] = definition
+        pos_part = re.findall('pos:[a-zA-Z]+', compound)
+        senset_part = re.findall('senset:[a-zA-Z]+', compound)
+        compound, pos = split_compound(compound, pos_part)
+        compound, senset = split_compound(compound, senset_part)
+        response['pos'] = pos
+        response['senset'] = senset
+        response['query'] = compound
     return response
+
+
+def split_compound(compound, part):
+    param = ''
+    if part:
+        _, param = part[0].split(':')
+        compound = compound.replace(part[0], '').strip()
+    else:
+        compound = compound.strip()
+    return (compound, param)
